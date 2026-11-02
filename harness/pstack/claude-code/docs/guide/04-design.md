@@ -88,6 +88,16 @@ The same idea scales up to a real design. Pair `/architect` with prototypes and 
 
 Don't spend adversaries on an abstract plan. `/interrogate` drops every finding a run does not prove, so a plan with no code behind it gives them little to break. Let prototypes settle the questions, then review what got built.
 
+## Promise the flow with `/flow-promises`
+
+For a new user flow, the edge cases hide in what happens without the user: a save that fails, a request that ends after the user left. Settle them before code:
+
+```text
+/flow-promises the new onboarding. you can skip from any step, and you never get stuck.
+```
+
+[`/flow-promises`](../../skills/flow-promises/SKILL.md) mocks each screen, models the flow in Quint, and checks the promises you agree to with TLC. Each broken promise comes back as a path through the mocks, with fixes for you to pick from. The mocks, the model, and the chart go into the repo as the seed for the build.
+
 ## Write the README first for shared code
 
 For a package or API that other code will use, start with the doc a user would read:
@@ -125,6 +135,7 @@ You might be wondering whether every change needs this. No. Most changes need no
 - A standalone decision where independent attempts would help, like naming, formats, or an algorithm, is `/arena` directly.
 - A coverage matrix, set of parallel checks, or race with declared arms is `/swarm`.
 - An open question you could answer by running something, like a layout, a timing, or an approach, gets a prototype, not a debate.
+- A new user flow with screens, retries, and ways out gets `/flow-promises` before code.
 - A contested design that's expensive to reverse gets `/architect`, then `/interrogate` before shipping.
 - Work that spans several PRs gets a plan, written after the design settles.
 
