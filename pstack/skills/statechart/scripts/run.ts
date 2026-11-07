@@ -118,14 +118,18 @@ const joined = (files: string[]): Output => {
   }
   return {
     *[Symbol.iterator]() {
-      for (let f = 0; f < fds.length; f++)
-        for (let pos = 0; pos < sizes[f];) {
-          const buf = Buffer.allocUnsafe(Math.min(PART, sizes[f] - pos));
-          const n = fs.readSync(fds[f], buf, 0, buf.length, pos);
-          if (!n) break;
-          pos += n;
-          yield buf.subarray(0, n);
-        }
+      try {
+        for (let f = 0; f < fds.length; f++)
+          for (let pos = 0; pos < sizes[f];) {
+            const buf = Buffer.allocUnsafe(Math.min(PART, sizes[f] - pos));
+            const n = fs.readSync(fds[f], buf, 0, buf.length, pos);
+            if (!n) break;
+            pos += n;
+            yield buf.subarray(0, n);
+          }
+      } finally {
+        for (const fd of fds) fs.closeSync(fd);
+      }
     },
   };
 };

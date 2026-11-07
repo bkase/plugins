@@ -17,6 +17,7 @@ flow=
 config=
 view=
 out=
+out_was_set=false
 while [ $# -gt 0 ]; do
   case $1 in
     --config|--view|--out) [ $# -ge 2 ] || { echo "$1 needs a value." >&2; exit 2; } ;;
@@ -24,7 +25,7 @@ while [ $# -gt 0 ]; do
   case $1 in
     --config) config=$2; shift 2 ;;
     --view) view=$2; shift 2 ;;
-    --out) out=$2; shift 2 ;;
+    --out) out=$2; out_was_set=true; shift 2 ;;
     -h|--help) echo "$usage"; exit 0 ;;
     -*) echo "Unknown option $1" >&2; echo "$usage" >&2; exit 2 ;;
     *) [ -z "$flow" ] || { echo "Give one FLOW.qnt." >&2; exit 2; }; flow=$1; shift ;;
@@ -36,6 +37,9 @@ case $flow in *.qnt) ;; *) echo "$flow is not a .qnt file." >&2; exit 2 ;; esac
 config=${config:-${flow%.qnt}.cfg}
 [ -f "$config" ] || { echo "Cannot find the TLC config $config. Pass --config FILE." >&2; exit 2; }
 out=${out:-${flow%.qnt}-chart}
+if [ "$out_was_set" = false ] && [ -d "$out" ]; then
+  rm -rf "$out"
+fi
 name=$(basename "$flow" .qnt)
 grep -Eq "^[[:space:]]*module[[:space:]]+$name([[:space:]{]|\$)" "$flow" ||
   { echo "$flow has no module named $name. Name the main module after the file." >&2; exit 2; }
